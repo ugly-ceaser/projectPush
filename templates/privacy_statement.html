@@ -1,0 +1,39 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Privacy Statement{% endblock %}
+
+{% block content %}
+
+
+<div class="max-w-3xl mx-auto py-10 px-4">
+    <h1 class="text-3xl font-bold mb-4">Privacy Statement</h1>
+    <p class="mb-4">This statement declares how Umuahia Community Ireland collects personal information through its website and how such information is used. Umuahia Community Ireland reserves the right to modify this statement at any time, and such modifications shall take effect upon posting of the modified agreement.</p>
+    <h2 class="text-xl font-semibold mt-6 mb-2">Why do we collect personal data?</h2>
+    <p class="mb-4">Personal Data means any data related to a person that allows that person to be identified, such as name, age, telephone number, e-mail, and postal address.<br>
+    We want to collect, maintain, and use your Data to deliver the service you have requested via our website. Your information will only be used to match your request for information with our services.<br>
+    We will use your Data only for the purpose outlined above. We have in place stringent policies and terms on Data use and protection.</p>
+    <h2 class="text-xl font-semibold mt-6 mb-2">How do we collect personal data?</h2>
+    <p class="mb-4">We collect data via our website contact form and email link.</p>
+    <h2 class="text-xl font-semibold mt-6 mb-2">Security of collected data</h2>
+    <p class="mb-4">We employ all reasonable measures to ensure the security and quality of your data.</p>
+    <h2 class="text-xl font-semibold mt-6 mb-2">How do we protect your data?</h2>
+    <p class="mb-4">You have the right to be informed about why, how, and by whom your data is processed. You have the right to access your data, rectify inaccurate data, and have your data erased. If you would like a copy of the personal data we store about you, please get in touch with us using the details below. To ensure privacy, you will be asked to provide some proof of identification.</p>
+    <h2 class="text-xl font-semibold mt-6 mb-2">Your Data Rights</h2>
+    <p class="mb-4">Internal access to your data is limited to those individuals who will directly supply you with information and services. We employ the necessary physical, electronic, and procedural safeguards to comply with regulations to protect your data.</p>
+    <h2 class="text-xl font-semibold mt-6 mb-2">Industry Standards</h2>
+    <p class="mb-4">Our privacy policy has been established following the General Data Protection Regulation (GDPR) and the Irish laws, the Data Protection Acts 1988 &amp; 2003 along with the Statutory Instrument Number 535 of 2003 European Communities (Electronic Communications Networks and Services) (Data Protection and Privacy) Regulations 2003 (“SI 535/2003”)</p>
+    <h2 class="text-xl font-semibold mt-6 mb-2">Contact Us</h2>
+    <p class="mb-4">If you need further assistance or would like to comment, please e-mail <a href="mailto:umuahiacommunityireland@gmail.com" class="text-blue-500 underline">umuahiacommunityireland@gmail.com</a></p>
+    <h2 class="text-xl font-semibold mt-6 mb-2">Last Updated</h2>
+    <p>This Privacy Statement was last updated on 30 June 2025.</p>
+</div>
+
+<!-- Debug information -->
+<script>
+    console.log('Privacy page loaded');
+    console.log('PayPal Client ID available:', '{{ paypal_client_id }}' ? 'Yes' : 'No');
+    console.log('Header element:', document.querySelector('header'));
+    console.log('Navbar elements:', document.querySelectorAll('nav'));
+</script>
+{% endblock %}

@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Charity organization, Umuahia Community Ireland"/>
+    <meta name="keywords" content="Migrants, Charity organization"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>
+        Umuahia Community Ireland | {% block title %}{% endblock title %}
+    </title>
+
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Montserrat&family=Open+Sans&family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR"></script>
+    <style>
+        .scroll-section {
+            scroll-margin-top: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="w-full bg-white h-30 sticky top-0 z-50 shadow-md" id="header">
+        <div class="container mx-auto flex justify-between items-center px-6 py-4">
+            <a href="/" class="flex flex-col items-center space-y-2">
+                <img class="object-cover" src="{% static 'img/logo.png' %}" alt="Logo" width="90" height="90">
+                <h1 class='display-2'>Togetherness is power</h1>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-8">
+                <ul class="flex items-center space-x-6 font-medium text-lg">
+                    <li><a href="/#hero" class="text-gray-700 hover:text-primary transition-all duration-300">Home</a></li>
+                    <li><a href="/#about" class="text-gray-700 hover:text-primary transition-all duration-300">About Us</a></li>
+                    <li><a href="/#gallery" class="text-gray-700 hover:text-primary transition-all duration-300">Gallery</a></li>
+                    <li><a href="/#contact" class="text-gray-700 hover:text-primary transition-all duration-300">Contact Us</a></li>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_superuser %}
+                            <li><a href="{% url 'admin:dashboard' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
+                        {% else %}
+                            <li><a href="{% url 'user:dashboard' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'accounts:logout' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'accounts:login' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Login</a></li>
+                    {% endif %}
+                </ul>
+
+                <div id="nav-paypal-button-container" class="inline-block"></div>
+            </nav>
+
+            <button class="md:hidden text-gray-600 focus:outline-none" id="menu-toggle">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="md:hidden bg-white shadow-md w-full p-5 space-y-4" id="mobile-menu" style="display: none;">
+            <ul class="flex flex-col items-start space-y-4 text-lg font-medium text-gray-700">
+                <li><a href="{% url 'app:home_page' %}" class="hover:text-primary transition-all duration-300">Home</a></li>
+                <li><a href="/#about" class="hover:text-primary transition-all duration-300">About Us</a></li>
+                <li><a href="/#gallery" class="hover:text-primary transition-all duration-300">Gallery</a></li>
+                <li><a href="/#contact" class="hover:text-primary transition-all duration-300">Contact Us</a></li>
+                {% if request.user.is_authenticated %}
+                    <li><a href="{% url 'accounts:logout' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Logout</a></li>
+                    {% if request.user.is_superuser %}
+                        <li><a href="{% url 'admin:dashboard' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
+                    {% else %}
+                        <li><a href="{% url 'user:dashboard' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Login</a></li>
+                {% endif %}
+            </ul>
+            <div id="nav-paypal-button-container" class="inline-block"></div>
+        </div>
+    </header>
+
+    {% block content %}{% endblock content %}
+
+    <footer class="bg-gray-900 text-gray-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-lg mb-4">Contact</h3>
+                    <div class="text-gray-400 space-y-2">
+                        <p>Umuahia Community Ireland</p>
+                        <p>15 Saint Donagh's Road</p>
+                        <p>Donaghmede</p>
+                        <p>Dublin 13</p>
+                        <p>D13 HC82</p>
+                        <p>+353 89 969 3524</p>
+                        <p><abbr title="Electronic Mail">Email</abbr>: umuahiacommunityireland@gmail.com</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-lg mb-4">Legal</h3>
+                    <div class="text-gray-400 space-y-2">
+                        <p>© Umuahia Community 2025. All rights reserved.</p>
+                        <p>Umuahia Community Ireland Company Limited by Guarantee (CLG)</p>
+                        <p>Registration Number: 771112</p>
+                        <p>Registered Charity Number: 20206800</p>
+                        <p>Dublin City PPN Number: DCCPPN-01429</p>
+                        <a href="{% url 'privacy_statement' %}" class="text-blue-500 hover:text-blue-400 transition-colors">Privacy Statement</a>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-lg mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=61561613840171" target="_blank" class="p-2 bg-gray-800 rounded-full hover:bg-[#1877F2] transition-colors group" aria-label="Facebook">
+                            <i class="fab fa-facebook text-lg w-6 h-6 text-center group-hover:text-white"></i>
+                        </a>
+                        <a href="https://x.com/UIreland66867" target="_blank" class="p-2 bg-gray-800 rounded-full hover:bg-black transition-colors group" aria-label="Twitter">
+                            <i class="fab fa-x-twitter text-lg w-6 h-6 text-center group-hover:text-[#1DA1F2]"></i>
+                        </a>
+                        <a href="https://www.instagram.com/umuahians/" target="_blank" class="p-2 bg-gray-800 rounded-full hover:bg-gradient-to-r from-[#833AB4] via-[#C13584] to-[#E1306C] transition-colors group relative overflow-hidden" aria-label="Instagram">
+                            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <i class="fab fa-instagram text-lg w-6 h-6 text-center relative z-10 group-hover:text-white"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400 text-sm">
+                <p>© Umuahia Community Ireland {% now "Y" %}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.style.display = mobileMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        $('#contactForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{% url 'send_email' %}",
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Your message has been sent successfully.',
+                        });
+                        $('#contactForm')[0].reset();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: data.error || 'Something went wrong!',
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred. Please try again.',
+                    });
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            new Swiper('.gallerySwiper', {
+                loop: true,
+                spaceBetween: 20,
+                slidesPerView: 1,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                breakpoints: {
+                    640: { slidesPerView: 2 },
+                    1024: { slidesPerView: 3 },
+                }
+            });
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href').slice(1);
+                const target = document.getElementById(targetId);
+                if (target) {
+                    e.preventDefault();
+                    const headerOffset = 120; // px
+                    const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - headerOffset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- PayPal Donation Button Configuration -->
+    <script>
+        // Check if PayPal SDK loaded successfully
+        if (typeof paypal !== 'undefined') {
+            // PayPal button for hero section
+            paypal.Buttons({
+                style: {
+                    layout: 'horizontal',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'donate'
+                },
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: '10.00' // Default donation amount in EUR
+                            },
+                            description: 'Donation to Umuahia Community Ireland'
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        // Handle successful donation
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thank you for your donation!',
+                            text: 'Your donation has been processed successfully.',
+                            confirmButtonText: 'OK'
+                        });
+                        
+                        // You can send the donation details to your backend here
+                        console.log('Donation completed:', details);
+                    });
+                },
+                onError: function(err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Donation Error',
+                        text: 'There was an error processing your donation. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error('PayPal error:', err);
+                }
+            }).render('#paypal-button-container');
+
+            // PayPal button for navigation
+            paypal.Buttons({
+                style: {
+                    layout: 'horizontal',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'donate'
+                },
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: '10.00' // Default donation amount in EUR
+                            },
+                            description: 'Donation to Umuahia Community Ireland'
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        // Handle successful donation
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thank you for your donation!',
+                            text: 'Your donation has been processed successfully.',
+                            confirmButtonText: 'OK'
+                        });
+                        
+                        // You can send the donation details to your backend here
+                        console.log('Donation completed:', details);
+                    });
+                },
+                onError: function(err) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Donation Error',
+                        text: 'There was an error processing your donation. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error('PayPal error:', err);
+                }
+            }).render('#nav-paypal-button-container');
+        } else {
+            // Fallback if PayPal doesn't load
+            console.error('PayPal SDK failed to load');
+            document.getElementById('paypal-button-container').innerHTML = '<button class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">Donate (PayPal Unavailable)</button>';
+            document.getElementById('nav-paypal-button-container').innerHTML = '<button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition">Donate (PayPal Unavailable)</button>';
+        }
+
+        // Debug: Check if PayPal client ID is loaded
+        console.log('PayPal Client ID:', '{{ paypal_client_id }}');
+        if (!'{{ paypal_client_id }}') {
+            console.warn('PayPal Client ID is not set. Please add PAYPAL_CLIENT_ID to your .env file.');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+{% extends './_base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block page_title %}Financial Checkbook{% endblock page_title %}
+
+{% block content %}
+
+<div class="under">
+    <div class="space-y-1">
+        <h3 class="text-3xl font-semibold">
+            Hi,
+            {% if request.user.first_name %}
+            {{request.user.first_name}}
+            {% else%}
+            Admin
+            {% endif %}</h3>
+    </div>
+    <a href="#" class="px-7 py-3 bg-secondary hover:bg-primary duration-300 text-white font-semibold text-sm rounded-md"
+        id="openCreateMinutes">Create
+        Checkbook</a>
+</div>
+
+<section class="p-0">
+    {% if checkbook_list %}
+    <table class="w-full border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-100">
+                <th class="border border-gray-300 px-4 py-2">Subject</th>
+                <th class="border border-gray-300 px-4 py-2">Checkbook</th>
+                <th class="border border-gray-300 px-4 py-2">Created At</th>
+                <th class="border border-gray-300 px-4 py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for checkbook in checkbook_list %}
+            <tr>
+                <td class="border border-gray-300 px-4 py-2">{{ checkbook.subject }}</td>
+                <td class="py-2 px-4 border-b"><a
+                        href="{% if checkbook.checkbook %}{{ checkbook.checkbook.url }}{% else %}{% endif %}"
+                        class="hover:underline" target="_blank">
+                        {{ checkbook.checkbook|truncatewords:20 }}</a></td>
+                <td class="border border-gray-300 px-4 py-2">{{ checkbook.created_at|date:"n/j/Y H:i A" }}</td>
+                <td class="border border-gray-300 px-4 py-2 flex space-x-2">
+                    <a href="{% url 'admin:edit_checkbook' checkbook.id %}"
+                        class="bg-blue-600 text-white px-2 py-1 rounded-sm hover:bg-blue-700">Edit</a>
+                    <button class="bg-red-600 text-white px-2 py-1 rounded-sm hover:bg-red-700"
+                        onclick="openDeleteModal('{{ checkbook.id }}', '${{ checkbook.amount }}')">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="flex items-center justify-center space-y-2 flex-col">
+        <img src="{% static 'img/user.png' %}" alt="No Checkbooks" class="w-24">
+        <h2>No Financial Checkbooks Found</h2>
+        <p>There are no records available at the moment.</p>
+    </div>
+    {% endif %}
+</section>
+
+<div id="createMinutesModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    style="display: none;">
+    <div class="modal-content bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative space-y-5">
+        <span class="close absolute top-3 right-4 text-gray-600 text-xl cursor-pointer hover:text-red-500"
+            onclick="closeModal()">&times;</span>
+        <h3 class="text-2xl font-semibold text-gray-800">Add Financial Entry</h3>
+        <p class="text-gray-600">Record a new financial transaction</p>
+
+        <form id="checkbookForm" class="space-y-4" method="post" action="{% url 'admin:create_checkbook' %}"
+            enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div>
+                <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
+                <input name="subject" id="subject"
+                    class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                    required />
+            </div>
+
+            <div>
+                <label for="checkbook" class="block text-sm font-medium text-gray-700">Checkbook</label>
+                <input type="file" id="minutesFile" name="checkbook" accept=".pdf,.doc,.docx"
+                    class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div class="modal-footer flex justify-end space-x-4">
+                <button type="submit"
+                    class="publish-btn bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition">
+                    Save Entry
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast">
+    <img id="toast-icon" src="{% static 'img/checks.png' %}" alt="Success" class="toast-icon">
+    <div class="toast-content">
+        <h4 id="toast-title">Success</h4>
+        <p id="toast-message"></p>
+    </div>
+    <button class="close-btn" onclick="hideToast()">×</button>
+</div>
+
+<div id="deleteModal" class="modals fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+        <span class="close absolute top-2 right-2 text-gray-600 hover:text-gray-800 cursor-pointer">&times;</span>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">
+            Are you sure you want to delete <span id="deleteMemberName" class="font-bold"></span>?
+        </h3>
+        <!-- Form for deletion -->
+        <form id="deleteForm" method="post" action="">
+            {% csrf_token %}
+            <div class="flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                    onclick="closeModal('deleteModal')">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                    Yes, Delete
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const createButton = document.getElementById("openCreateMinutes");
+        const modal = document.getElementById("createMinutesModal");
+        const form = document.getElementById("minutesForm");
+        const toast = document.getElementById("toast");
+
+        function showToast(title, message, isSuccess = true) {
+            const toastTitle = document.getElementById("toast-title");
+            const toastMessage = document.getElementById("toast-message");
+            const toastIcon = document.getElementById("toast-icon");
+
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            if (isSuccess) {
+                toast.classList.remove("error");
+                toast.classList.add("success");
+                toastIcon.src = "{% static 'img/checks.png' %}";
+            } else {
+                toast.classList.remove("success");
+                toast.classList.add("error");
+                toastIcon.src = "{% static 'img/errors.png' %}";
+            }
+
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                hideToast();
+            }, 5000);
+        }
+
+        function hideToast() {
+            toast.classList.remove("show");
+        }
+
+        function openModal() {
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            form.reset();
+        }
+
+        createButton?.addEventListener("click", openModal);
+        document.querySelector(".close")?.addEventListener("click", closeModal);
+
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+    });
+</script>
+
+<script>
+    // Open delete modal and update the form action
+    function openDeleteModal(userId, userName) {
+        document.getElementById("deleteMemberName").textContent = userName;
+        // Build the URL, e.g. "/user/123/delete/"
+        document.getElementById("deleteForm").action = `${userId}/delete/`;
+        document.getElementById("deleteModal").style.display = "block";
+    }
+
+    // Generic function to close modals by id
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    // Ensure all close buttons work after the DOM is loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".close").forEach(closeBtn => {
+            closeBtn.addEventListener("click", function () {
+                this.closest(".modals").style.display = "none";
+            });
+        });
+    });
+</script>
+{% endblock content %}

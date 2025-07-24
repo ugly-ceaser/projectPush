@@ -1,0 +1,42 @@
+{% extends './_base.html' %}
+{% load static %}
+
+{% block page_title %}Edit Financial Checkbook{% endblock page_title %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8">
+    <h2 class="text-3xl font-bold mb-6 text-center">Edit Financial Checkbook</h2>
+
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="subject class=" block text-sm font-medium">Subject</label>
+                    <input type="text" name="subject id=" subject
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-300 px-4 py-2"
+                        value="{{ checkbook.subject }}" required>
+                </div>
+                <div class="col-span-2">
+                    <label for="checbook" class="block text-sm font-medium">Checbook</label>
+                    {% if checkbook.checkbook %}
+                    <p class="mt-1 text-sm text-gray-600">
+                        Current File:
+                        <a href="{{ checkbook.checkbook.url }}" class="text-blue-600 underline" target="_blank">
+                            {{ checkbook.checkbook.name|slice:"10:" }}
+                        </a>
+                    </p>
+                    {% endif %}
+                    <input type="file" name="checkbook" id="checkbook"
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-indigo-300 px-4 py-2">
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
+                Update Checkbook
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

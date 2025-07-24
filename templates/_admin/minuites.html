@@ -1,0 +1,224 @@
+{% extends './_base.html' %}
+{% load static %}
+
+{% block page_title %}Minuites Management{% endblock page_title %}
+
+{% block content %}
+
+<div class="under">
+    <div class="space-y-1">
+        <h3 class="text-3xl font-semibold">
+            Hi,
+            {% if request.user.first_name %}
+            {{request.user.first_name}}
+            {% else%}
+            Admin
+            {% endif %}</h3>
+    </div>
+    <a href="#" class="px-7 py-3 bg-secondary hover:bg-primary duration-300 text-white font-semibold text-sm rounded-md"
+        id="openCreateMinutes">Create
+        Minuite</a>
+</div>
+
+<section class="p-0">
+
+    {% if minuites %}
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Minuite</th>
+                <th>Date</th>
+                <th>Created At</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for minuite in minuites %}
+            <tr>
+                <td>{{ minuite.title }}</td>
+                <td class="py-2 px-4 border-b"><a href="{{ minute.minuites.url }}" class="hover:underline"
+                        target="_blank">
+                        {{ minuite.minuites|truncatewords:20 }}</a></td>
+                <td>{{ minuite.date|date:"n/j/Y" }}</td>
+                <td>{{ minuite.created_at|date:"n/j/Y" }}</td>
+                <td class="flex">
+                    <a href="{% url 'admin:edit_minuites' minuite.id %}"
+                        class="reset-btn text-sm text-white font-semibold bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded-sm">
+                        <i class="ti ti-eye"></i>
+                        View
+                    </a>
+                    <button
+                        class="delete-btn text-sm text-white font-semibold bg-red-600 hover:bg-red-700 px-2 py-1 rounded-sm"
+                        onclick="openDeleteModal('{{ minuite.id }}', '{{ minuite.title }}')">
+                        <i class="ti ti-trash"></i>
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="flex items-center justify-center space-y-2 flex-col">
+        <img src="{% static 'img/user.png' %}" alt="No Members" class="w-24">
+        <h2>No Minutes are uploaded</h2>
+        <p>Currently, there are no current minutes.</p>
+    </div>
+    {% endif %}
+</section>
+
+<div id="createMinutesModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    style="display: none;">
+    <div class="modal-content bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative space-y-5">
+        <span class="close absolute top-3 right-4 text-gray-600 text-xl cursor-pointer hover:text-red-500"
+            onclick="closeModal()">&times;</span>
+        <h3 class="text-2xl font-semibold text-gray-800">Create Minutes</h3>
+        <p class="text-gray-600">This information will be used to create Minutes</p>
+
+        <form id="minutesForm" class="space-y-4" method="post" action="{% url 'admin:create_minutes' %}"
+            enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <label for="minutesTitle" class="block text-sm font-medium text-gray-700">Minutes Title*</label>
+                <input type="text" id="minutesTitle" placeholder="Enter minutes title" name="title"
+                    class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="minutesDate" class="block text-sm font-medium text-gray-700">Minutes Date*</label>
+                <input type="date" id="minutesDate"
+                    class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    name="date">
+            </div>
+
+            <div>
+                <label for="minutesDescription" class="block text-sm font-medium text-gray-700">Minutes</label>
+                <input type="file" id="minutesFile" name="minuites" accept=".pdf,.doc,.docx"
+                    class="mt-1 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div class="modal-footer flex justify-end space-x-4">
+                <button type="submit"
+                    class="publish-btn bg-blue-600 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-700 transition">
+                    Save and Publish
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast">
+    <img id="toast-icon" src="{% static 'img/checks.png' %}" alt="Success" class="toast-icon">
+    <div class="toast-content">
+        <h4 id="toast-title">Success</h4>
+        <p id="toast-message"></p>
+    </div>
+    <button class="close-btn" onclick="hideToast()">×</button>
+</div>
+
+<div id="deleteModal" class="modals fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+        <span class="close absolute top-2 right-2 text-gray-600 hover:text-gray-800 cursor-pointer">&times;</span>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">
+            Are you sure you want to delete <span id="deleteMemberName" class="font-bold"></span>?
+        </h3>
+        <!-- Form for deletion -->
+        <form id="deleteForm" method="post" action="">
+            {% csrf_token %}
+            <div class="flex justify-end space-x-2">
+                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                    onclick="closeModal('deleteModal')">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                    Yes, Delete
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const createButton = document.getElementById("openCreateMinutes");
+        const modal = document.getElementById("createMinutesModal");
+        const form = document.getElementById("minutesForm");
+        const toast = document.getElementById("toast");
+
+        function showToast(title, message, isSuccess = true) {
+            const toastTitle = document.getElementById("toast-title");
+            const toastMessage = document.getElementById("toast-message");
+            const toastIcon = document.getElementById("toast-icon");
+
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            if (isSuccess) {
+                toast.classList.remove("error");
+                toast.classList.add("success");
+                toastIcon.src = "{% static 'img/checks.png' %}";
+            } else {
+                toast.classList.remove("success");
+                toast.classList.add("error");
+                toastIcon.src = "{% static 'img/errors.png' %}";
+            }
+
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                hideToast();
+            }, 5000);
+        }
+
+        function hideToast() {
+            toast.classList.remove("show");
+        }
+
+        function openModal() {
+            modal.style.display = "flex";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            form.reset();
+        }
+
+        createButton?.addEventListener("click", openModal);
+        document.querySelector(".close")?.addEventListener("click", closeModal);
+
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+    });
+</script>
+
+
+<script>
+    // Open delete modal and update the form action
+    function openDeleteModal(userId, userName) {
+        document.getElementById("deleteMemberName").textContent = userName;
+        // Build the URL, e.g. "/user/123/delete/"
+        document.getElementById("deleteForm").action = `${userId}/delete/`;
+        document.getElementById("deleteModal").style.display = "block";
+    }
+
+    // Generic function to close modals by id
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    // Ensure all close buttons work after the DOM is loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".close").forEach(closeBtn => {
+            closeBtn.addEventListener("click", function () {
+                this.closest(".modals").style.display = "none";
+            });
+        });
+    });
+</script>
+{% endblock content %}

@@ -1,0 +1,440 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<style>
+    .swiper-slide {
+        height: auto;
+        /* Ensures slides match tallest content */
+    }
+
+    .gallerySwiper {
+        padding: 20px 0;
+        /* Space for navigation */
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+        color: #4A4646;
+        /* Match your theme */
+    }
+
+    #hero, .slider-bg, .slider-image {
+        width: 100vw !important;
+        height: 80vh !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+    .slider-bg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 0;
+    }
+    .slider-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw !important;
+        height: 80vh !important;
+        object-fit: cover !important;
+        object-position: center center !important;
+        opacity: 0;
+        transition: opacity 1s;
+        z-index: 1;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-sizing: border-box !important;
+    }
+    .slider-image.active {
+        opacity: 1;
+        z-index: 2;
+    }
+</style>
+
+<section class="relative overflow-hidden" id="hero" style="height:60vh; min-height:350px;">
+    <!-- Background Images -->
+    <div class="slider-bg z-[1]">
+        <img src="{% static 'img/back1.jpg' %}" class="slider-image active" />
+        <img src="{% static 'img/back3.jpg' %}" class="slider-image" />
+        <img src="{% static 'img/back5.jpg' %}" class="slider-image" />
+        <img src="{% static 'img/back6.jpg' %}" class="slider-image" />
+    </div>
+
+    <!-- Dark Overlay -->
+    <div class="absolute inset-0 z-[3] bg-black" style="background: rgba(0,0,0,0.5);"></div>
+
+    <!-- Hero Text Content -->
+    <div class="flex items-center justify-center py-10 h-full flex-col relative z-10" style="height:60vh; min-height:350px;">
+        <div class="flex items-center flex-col text-center space-y-5">
+            <h1 class="text-4xl md:text-7xl font-bold text-white opensans-text" data-aos="fade-up">
+                Welcome to
+            </h1>
+
+            <h2 class="text-5xl md:text-5xl font-bold text-white opensans-text" data-aos="fade-up" data-aos-delay="200">
+                Umuahia Community Ireland
+            </h2>
+
+            <p class="text-xl md:text-2xl text-white w-full md:w-1/2" data-aos="fade-up" data-aos-delay="400">
+                We empower and support African immigrants, as they navigate life in Ireland. We are dedicated to fostering a strong,
+                inclusive community to ease the challenges of relocation.
+            </p>
+
+            <div class="flex items-center justify-between space-x-5" data-aos="fade-up" data-aos-delay="600">
+                <a href="{% url 'accounts:register' 'user' %}"
+                    class="bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                    Register
+                </a>
+                <div id="paypal-button-container" class="inline-block"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Slider Script -->
+    <script>
+        const images = document.querySelectorAll('.slider-image');
+        let current = 0;
+        setInterval(() => {
+            images[current].classList.remove('active');
+            current = (current + 1) % images.length;
+            images[current].classList.add('active');
+        }, 7000);
+    </script>
+</section>
+
+
+
+
+<section id='about' class="h-fit flex items-center justify-center mt-10" data-aos="fade-left" data-aos-duration="1200">
+    <div class="container flex sm:flex-row flex-col-reverse">
+        <div class="w-full md:w-1/2 space-y-2 p-10 flex items-center justify-center" data-aos="fade-right"
+            data-aos-delay="400">
+            <div class="w-full md:w-3/4 space-y-6">
+                <h1 class="text-4xl md:text-[3rem] font-semibold text-black" data-aos="fade-up">About Us
+                </h1>
+                <p class="text-md" data-aos="fade-up" data-aos-delay="200">Umuahia Community Ireland is a registered
+                    charity organization that supports African immigrants, as they settle and thrive in Ireland. 
+                    Officially registered on 4th September 2024, our mission is to foster integration by
+                    providing cultural orientation, career development, and emotional support to individuals and
+                    families navigating their new environment.
+                </p>
+                <p class="text-md" data-aos="fade-up" data-aos-delay="200">
+                    We believe that a strong community is the foundation for a successful and fulfilling life in
+                    a new country. Through our mentorship programs, networking events, and practical resources,
+                    we help immigrants understand Irish culture, access employment opportunities, and build meaningful
+                    social connections.
+                </p>
+                <p class="text-md" data-aos="fade-up" data-aos-delay="200">
+                    Additionally, we advocate for fair access to essential services such as housing, education, and
+                    healthcare, ensuring that newcomers receive the support they need to flourish. By preserving our
+                    cultural identity while embracing our new home, we strive to create a vibrant, inclusive society
+                    where everyone feels a sense of belonging.
+                </p>
+                <p class="text-md" data-aos="fade-up" data-aos-delay="200">
+                    Join us in building a stronger community—together, we thrive!
+                </p>
+                <a href="#contact"
+                    class="px-10 py-2 rounded-sm border-2 border-primary duration-300 hover:bg-primary text-primary hover:text-white font-semibold text-sm block w-fit uppercase"
+                    data-aos="fade-up" data-aos-delay="400">Join Us Today</a>
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 flex items-center justify-between" data-aos="zoom-in" data-aos-delay="200">
+            <img src="{% static 'img/umuinsidetower.png' %}" alt="Map" class="w-full h-full object-cover rounded-br-[250px]">
+        </div>
+    </div>
+</section>
+
+<!-- Founder's Vision Section -->
+<section id="founder" class="h-fit flex items-center justify-center bg-gray-50 py-16" data-aos="fade-left"
+    data-aos-duration="1200">
+    <div class="container flex md:flex-row flex-col">
+        <!-- Founder's Image -->
+        <div class="w-full md:w-1/2 flex items-center justify-center" data-aos="zoom-in" data-aos-delay="200">
+            <img src="{% static 'img/accnmpic.jpg' %}" alt="Founder"
+                class="w-full h-full object-contain rounded-br-[250px]">
+        </div>
+
+        <!-- Founder's Content -->
+        <div class="w-full md:w-1/2 space-y-2 p-10 flex items-center justify-center" data-aos="fade-right"
+            data-aos-delay="400">
+            <div class="w-full md:w-3/4 space-y-6">
+                <h1 class="text-4xl md:text-[3rem] font-semibold text-black" data-aos="fade-up">Founder's
+                    Vision</h1>
+                <h2 class="text-2xl font-semibold text-gray-700" data-aos="fade-up" data-aos-delay="200">Co-Founders
+                </h2>
+                <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
+                    At Umuahia Community Ireland, our vision is rooted in the belief that every immigrant deserves a
+                    strong foundation, a supportive community, and equal opportunities to succeed in their new home. 
+                </p>
+                <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
+                    When we founded this organization, we envisioned a place where African immigrants, could find
+                    guidance, support, and a sense of belonging as they navigate life in Ireland. Moving to a new
+                    country comes with many challenges—understanding the culture, securing employment, accessing
+                    housing, and overcoming feelings of isolation. 
+                </p>
+                <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
+                    Through cultural orientation, career development, and emotional support, we aim to empower 
+                    individuals and families to survive and thrive. 
+                </p>
+                <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
+                    Our community is more than just a network—it is a home away from home, where we celebrate our
+                    heritage while embracing the opportunities that Ireland offers. Our vision is to see every immigrant confidently
+                    integrating into Irish society, achieving their dreams, and contributing meaningfully to their new communities.
+                </p>
+                <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
+                    Together, we can build a future where no one feels alone in their journey—where unity, support, and
+                    success are within reach for all.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="h-fit flex items-center justify-center bg-white py-16" data-aos="fade-right"
+    data-aos-duration="1200">
+    <div class="container flex md:flex-row flex-col">
+        <!-- Testimonial Content -->
+        <div class="w-full md:w-1/2 space-y-2 p-10 flex items-center justify-center" data-aos="fade-left"
+            data-aos-delay="400">
+            <div class="w-full md:w-3/4 space-y-6">
+                <h1 class="text-4xl md:text-[3rem] font-semibold text-black" data-aos="fade-up">
+                    Testimonials</h1>
+                <blockquote class="text-md text-gray-600 italic" data-aos="fade-up" data-aos-delay="200">
+                    "From being taken under until now, I have learned and grown so much. I thank each and every one of
+                    you for teaching and inspiring me.
+                    I'm excited about the future while I continue to be excited about all the things we will continue to
+                    accomplish here. Please remember
+                    that the work you all do here is very special. Every day you all help others. It has been an
+                    absolute honour!"
+                </blockquote>
+                <p class="text-md text-gray-800 font-semibold" data-aos="fade-up" data-aos-delay="300">
+                    <strong>Work Programmes Graduate</strong><br>
+                    Now working full-time with a law firm
+                </p>
+            </div>
+        </div>
+
+        <!-- Testimonial Image -->
+        <div class="w-full md:w-1/2 flex items-center justify-center" data-aos="zoom-in" data-aos-delay="200">
+            <img src="{% static 'img/chirite.JPG' %}" alt="Testimonial"
+                class="w-full h-full object-cover rounded-tl-[250px]">
+        </div>
+    </div>
+</section>
+
+{% comment %} work {% endcomment %}
+
+<section id="change" class="h-fit flex items-center justify-center p-10 bg-red-50" data-aos="fade-up"
+    data-aos-duration="1000">
+    <div class="container flex md:flex-row flex-col">
+        <div class="w-full md:w-1/2 space-y-2 md:p-10 flex items-center justify-center" data-aos="fade-right"
+            data-aos-delay="200">
+            <div class="w-full md:w-3/4">
+                <h1 class="text-4xl md:text-[2rem] font-semibold text-black mb-3" data-aos="fade-up">The History Of Umuahia 
+                    - Cradle of Culture, Commerce, and Courage 
+                </h1>
+                <div class="max-w-2xl mx-auto px-4 py-6">
+  <!-- First Paragraph (Always Visible) -->
+  <p class="text-gray-700 mb-4">
+    Umuahia, the capital of Abia State in south-eastern Nigeria, is a city rich in cultural heritage, historic
+    significance, and agricultural strength. Nestled between verdant hills and fertile lands, Umuahia derives
+    its name from "Oma ahia," meaning "market place" in the Igbo language. Over time, the term evolved into
+    "Umuahia," reflecting both its trading roots and the vibrant communities that make up the region.
+  </p>
+
+  <!-- Hidden Paragraphs (Initially hidden) -->
+  <div id="moreContent" class="hidden transition-all duration-500 space-y-4 text-gray-700">
+    <p>
+      Historically, Umuahia was an important stop along the trade routes during the pre-colonial era, serving as a central hub for
+      exchanging palm oil, kola nuts, and agricultural goods...
+    </p>
+    <p>
+      Umuahia also played a pivotal role during Nigeria's civil war (1967–1970), serving briefly as the capital of the
+      defunct Republic of Biafra...
+    </p>
+    <p>
+      Today, Umuahia is known for its serene environment, rich traditions, and as the home of many notable scholars...
+    </p>
+    <p>
+      For members of the Umuahia diaspora in Ireland and beyond, the city remains a source of identity...
+    </p>
+  </div>
+
+  <!-- Toggle Button -->
+  <button
+    id="toggleButton"
+    class="mt-4 text-blue-600 hover:text-blue-800 font-medium"
+    onclick="toggleReadMore()"
+  >
+    Read More
+  </button>
+    </div>
+
+                <a href=""
+                    class="mt-10 md:mt-20 px-10 py-2 rounded-sm border-2 border-primary duration-300 hover:bg-primary text-primary hover:text-white font-semibold text-sm block w-fit uppercase"
+                    data-aos="fade-up" data-aos-delay="600">Donate</a>
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 p-2 flex items-center justify-center" data-aos="zoom-in" data-aos-delay="800">
+            <img src="{% static 'img/onye.jpg' %}" alt="Map" class="w-full object-cover">
+        </div>
+    </div>
+</section>
+
+<section id="gallery" class="flex items-center justify-center bg-white py-16" data-aos="fade-up">
+    <div class="container">
+        <!-- ... Title and description ... -->
+        <!-- Swiper Container -->
+        <div class="swiper gallerySwiper">
+            <div class="swiper-wrapper">
+                <!-- Slide 1 -->
+                <div class="swiper-slide">
+                    <div class="relative group">
+                        <img src="{% static 'img/allmahous.JPG' %}" alt="Gallery 1" class="w-full">
+                        <div
+                            class="overlay absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+                            <div class="text-white text-center">
+                                <h3 class="text-lg font-bold">February 2025 Monthly Meeting</h3>
+                                <p class="text-sm mt-2">Group section picture.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="relative group">
+                        <img src="{% static 'img/moses.jpg' %}" alt="Gallery 1" class="w-full">
+                        <div
+                            class="overlay absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+                            <div class="text-white text-center">
+                                <h3 class="text-lg font-bold">Timeless Elegance</h3>
+                                <p class="text-sm mt-2">A curated piece symbolizing eternal love and artistry.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="relative group">
+                        <img src="{% static 'img/machris.JPG' %}" alt="Gallery 1" class="w-full">
+                        <div
+                            class="overlay absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+                            <div class="text-white text-center">
+                                <h3 class="text-lg font-bold">Timeless Elegance</h3>
+                                <p class="text-sm mt-2">A curated piece symbolizing eternal love and artistry.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="relative group">
+                        <img src="{% static 'img/onye.jpg' %}" alt="Gallery 1" class="w-full">
+                        <div
+                            class="overlay absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+                            <div class="text-white text-center">
+                                <h3 class="text-lg font-bold">Timeless Elegance</h3>
+                                <p class="text-sm mt-2">A curated piece symbolizing eternal love and artistry.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="relative group">
+                        <img src="{% static 'img/mosnke.JPG' %}" alt="Gallery 1" class="w-full">
+                        <div
+                            class="overlay absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+                            <div class="text-white text-center">
+                                <h3 class="text-lg font-bold">Timeless Elegance</h3>
+                                <p class="text-sm mt-2">A curated piece symbolizing eternal love and artistry.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="relative group">
+                        <img src="{% static 'img/drcoy.jpg' %}" alt="Gallery 1" class="w-full">
+                        <div
+                            class="overlay absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+                            <div class="text-white text-center">
+                                <h3 class="text-lg font-bold">Timeless Elegance</h3>
+                                <p class="text-sm mt-2">A curated piece symbolizing eternal love and artistry.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Repeat for other slides with unique info -->
+        </div>
+       
+    </div>
+    </div>
+</section>
+
+<section class="h-fit flex items-center justify-center bg-red-50" id="contact" data-aos="fade-up"
+    data-aos-duration="1000">
+    <div class="container flex flex-col md:flex-row items-center justify-center min-h-screen">
+        <div class="md:w-1/2 w-full flex flex-col items-start md:p-10" data-aos="fade-right">
+            <h2 class="text-4xl font-bold text-[#99414A]" data-aos="fade-up">Get in Touch</h2>
+            <p class="text-gray-500 mt-2" data-aos="fade-up" data-aos-delay="200">
+                Fill out the form below or contact us by email or phone
+            </p>
+            <img src="{% static 'img/intouch.JPG' %}" alt="Contact Us Image" class="mt-6 w-full h-auto"
+                data-aos="zoom-in" data-aos-delay="400" />
+        </div>
+
+        <div class="w-full md:w-1/2 p-3 flex items-center justify-center" data-aos="fade-left" data-aos-delay="600">
+            <form id="contactForm" class="space-y-6 w-3/4 bg-[#F8F0D0] p-8 rounded-sm shadow-sm">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-gray-700">Name</label>
+                    <input type="text" name="name" placeholder="Enter your name"
+                        class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        data-aos="fade-up" />
+                </div>
+                <div>
+                    <label class="block text-gray-700">Surname</label>
+                    <input type="text" name="surname" placeholder="Enter your surname"
+                        class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        data-aos="fade-up" data-aos-delay="200" />
+                </div>
+                <div>
+                    <label class="block text-gray-700">Email</label>
+                    <input type="email" name="email" placeholder="Enter your email"
+                        class="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        data-aos="fade-up" data-aos-delay="400" />
+                </div>
+                <div>
+                    <label class="block text-gray-700">Message</label>
+                    <textarea name="message" placeholder="Enter your message"
+                        class="w-full px-4 py-2 mt-2 border rounded-md h-32 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        data-aos="fade-up" data-aos-delay="600"></textarea>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-primary text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                    data-aos="fade-up" data-aos-delay="800">
+                    Send
+                </button>
+            </form>
+            <!-- Add a placeholder for success/error messages -->
+            <div id="message"></div>
+        </div>
+    </div>
+</section>
+<script>
+  function toggleReadMore() {
+    const moreContent = document.getElementById('moreContent');
+    const button = document.getElementById('toggleButton');
+    moreContent.classList.toggle('hidden');
+    button.textContent = moreContent.classList.contains('hidden') ? 'Read More' : 'Read Less';
+  }
+</script>
+
+{% endblock %}
