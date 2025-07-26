@@ -4,20 +4,25 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Charity organization, Umuahia Community Ireland"/>
-    <meta name="keywords" content="Migrants, Charity organization"/>
+    <meta name="description" content="Charity organization, Umuahia Community Ireland" />
+    <meta name="keywords" content="Migrants, Charity organization" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>
         Umuahia Community Ireland | {% block title %}{% endblock title %}
     </title>
 
+    {% block extra_css %}
+    {% endblock %}
+
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Montserrat&family=Open+Sans&family=Roboto&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato&family=Montserrat&family=Open+Sans&family=Roboto&display=swap"
+        rel="stylesheet">
     <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR"></script>
     <style>
         .scroll-section {
@@ -36,19 +41,29 @@
 
             <nav class="hidden md:flex items-center space-x-8">
                 <ul class="flex items-center space-x-6 font-medium text-lg">
-                    <li><a href="/#hero" class="text-gray-700 hover:text-primary transition-all duration-300">Home</a></li>
-                    <li><a href="/#about" class="text-gray-700 hover:text-primary transition-all duration-300">About Us</a></li>
-                    <li><a href="/#gallery" class="text-gray-700 hover:text-primary transition-all duration-300">Gallery</a></li>
-                    <li><a href="/#contact" class="text-gray-700 hover:text-primary transition-all duration-300">Contact Us</a></li>
+                    <li><a href="/#hero" class="text-gray-700 hover:text-primary transition-all duration-300">Home</a>
+                    </li>
+                    <li><a href="/#about" class="text-gray-700 hover:text-primary transition-all duration-300">About
+                            Us</a></li>
+                    <li><a href="/#gallery"
+                            class="text-gray-700 hover:text-primary transition-all duration-300">Gallery</a></li>
+                    <li><a href="/#contact" class="text-gray-700 hover:text-primary transition-all duration-300">Contact
+                            Us</a></li>
+                    <li><a href="{% url 'blog:post_list' %}"
+                            class="text-gray-700 hover:text-primary transition-all duration-300">Blog</a></li>
                     {% if request.user.is_authenticated %}
-                        {% if request.user.is_superuser %}
-                            <li><a href="{% url 'admin:dashboard' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
-                        {% else %}
-                            <li><a href="{% url 'user:dashboard' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
-                        {% endif %}
-                        <li><a href="{% url 'accounts:logout' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Logout</a></li>
+                    {% if request.user.is_superuser %}
+                    <li><a href="{% url 'admin:dashboard' %}"
+                            class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
                     {% else %}
-                        <li><a href="{% url 'accounts:login' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Login</a></li>
+                    <li><a href="{% url 'user:dashboard' %}"
+                            class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'accounts:logout' %}"
+                            class="text-gray-700 hover:text-primary transition-all duration-300">Logout</a></li>
+                    {% else %}
+                    <li><a href="{% url 'accounts:login' %}"
+                            class="text-gray-700 hover:text-primary transition-all duration-300">Login</a></li>
                     {% endif %}
                 </ul>
 
@@ -64,19 +79,24 @@
 
         <div class="md:hidden bg-white shadow-md w-full p-5 space-y-4" id="mobile-menu" style="display: none;">
             <ul class="flex flex-col items-start space-y-4 text-lg font-medium text-gray-700">
-                <li><a href="{% url 'app:home_page' %}" class="hover:text-primary transition-all duration-300">Home</a></li>
+                <li><a href="{% url 'app:home_page' %}" class="hover:text-primary transition-all duration-300">Home</a>
+                </li>
                 <li><a href="/#about" class="hover:text-primary transition-all duration-300">About Us</a></li>
                 <li><a href="/#gallery" class="hover:text-primary transition-all duration-300">Gallery</a></li>
                 <li><a href="/#contact" class="hover:text-primary transition-all duration-300">Contact Us</a></li>
                 {% if request.user.is_authenticated %}
-                    <li><a href="{% url 'accounts:logout' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Logout</a></li>
-                    {% if request.user.is_superuser %}
-                        <li><a href="{% url 'admin:dashboard' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
-                    {% else %}
-                        <li><a href="{% url 'user:dashboard' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
-                    {% endif %}
+                <li><a href="{% url 'accounts:logout' %}"
+                        class="text-gray-700 hover:text-primary transition-all duration-300">Logout</a></li>
+                {% if request.user.is_superuser %}
+                <li><a href="{% url 'admin:dashboard' %}"
+                        class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
                 {% else %}
-                    <li><a href="{% url 'accounts:login' %}" class="text-gray-700 hover:text-primary transition-all duration-300">Login</a></li>
+                <li><a href="{% url 'user:dashboard' %}"
+                        class="text-gray-700 hover:text-primary transition-all duration-300">Dashboard</a></li>
+                {% endif %}
+                {% else %}
+                <li><a href="{% url 'accounts:login' %}"
+                        class="text-gray-700 hover:text-primary transition-all duration-300">Login</a></li>
                 {% endif %}
             </ul>
             <div id="nav-paypal-button-container" class="inline-block"></div>
@@ -109,22 +129,30 @@
                         <p>Registration Number: 771112</p>
                         <p>Registered Charity Number: 20206800</p>
                         <p>Dublin City PPN Number: DCCPPN-01429</p>
-                        <a href="{% url 'privacy_statement' %}" class="text-blue-500 hover:text-blue-400 transition-colors">Privacy Statement</a>
+                        <a href="{% url 'privacy_statement' %}"
+                            class="text-blue-500 hover:text-blue-400 transition-colors">Privacy Statement</a>
                     </div>
                 </div>
 
                 <div class="space-y-4">
                     <h3 class="text-white font-bold text-lg mb-4">Follow Us</h3>
                     <div class="flex space-x-4">
-                        <a href="https://www.facebook.com/profile.php?id=61561613840171" target="_blank" class="p-2 bg-gray-800 rounded-full hover:bg-[#1877F2] transition-colors group" aria-label="Facebook">
+                        <a href="https://www.facebook.com/profile.php?id=61561613840171" target="_blank"
+                            class="p-2 bg-gray-800 rounded-full hover:bg-[#1877F2] transition-colors group"
+                            aria-label="Facebook">
                             <i class="fab fa-facebook text-lg w-6 h-6 text-center group-hover:text-white"></i>
                         </a>
-                        <a href="https://x.com/UIreland66867" target="_blank" class="p-2 bg-gray-800 rounded-full hover:bg-black transition-colors group" aria-label="Twitter">
+                        <a href="https://x.com/UIreland66867" target="_blank"
+                            class="p-2 bg-gray-800 rounded-full hover:bg-black transition-colors group"
+                            aria-label="Twitter">
                             <i class="fab fa-x-twitter text-lg w-6 h-6 text-center group-hover:text-[#1DA1F2]"></i>
                         </a>
-                        <a href="https://www.instagram.com/umuahians/" target="_blank" class="p-2 bg-gray-800 rounded-full hover:bg-gradient-to-r from-[#833AB4] via-[#C13584] to-[#E1306C] transition-colors group relative overflow-hidden" aria-label="Instagram">
+                        <a href="https://www.instagram.com/umuahians/" target="_blank"
+                            class="p-2 bg-gray-800 rounded-full hover:bg-gradient-to-r from-[#833AB4] via-[#C13584] to-[#E1306C] transition-colors group relative overflow-hidden"
+                            aria-label="Instagram">
                             <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <i class="fab fa-instagram text-lg w-6 h-6 text-center relative z-10 group-hover:text-white"></i>
+                            <i
+                                class="fab fa-instagram text-lg w-6 h-6 text-center relative z-10 group-hover:text-white"></i>
                         </a>
                     </div>
                 </div>
@@ -136,6 +164,9 @@
         </div>
     </footer>
 
+
+    {% block extra_js %}
+    {% endblock %}
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -195,7 +226,7 @@
         });
 
         document.querySelectorAll('a[href^="#"]').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 const targetId = this.getAttribute('href').slice(1);
                 const target = document.getElementById(targetId);
                 if (target) {
@@ -224,7 +255,7 @@
                     shape: 'rect',
                     label: 'donate'
                 },
-                createOrder: function(data, actions) {
+                createOrder: function (data, actions) {
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
@@ -234,8 +265,8 @@
                         }]
                     });
                 },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(details) {
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
                         // Handle successful donation
                         Swal.fire({
                             icon: 'success',
@@ -243,12 +274,12 @@
                             text: 'Your donation has been processed successfully.',
                             confirmButtonText: 'OK'
                         });
-                        
+
                         // You can send the donation details to your backend here
                         console.log('Donation completed:', details);
                     });
                 },
-                onError: function(err) {
+                onError: function (err) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Donation Error',
@@ -267,7 +298,7 @@
                     shape: 'rect',
                     label: 'donate'
                 },
-                createOrder: function(data, actions) {
+                createOrder: function (data, actions) {
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
@@ -277,8 +308,8 @@
                         }]
                     });
                 },
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(details) {
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
                         // Handle successful donation
                         Swal.fire({
                             icon: 'success',
@@ -286,12 +317,12 @@
                             text: 'Your donation has been processed successfully.',
                             confirmButtonText: 'OK'
                         });
-                        
+
                         // You can send the donation details to your backend here
                         console.log('Donation completed:', details);
                     });
                 },
-                onError: function(err) {
+                onError: function (err) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Donation Error',
@@ -315,4 +346,5 @@
         }
     </script>
 </body>
+
 </html>

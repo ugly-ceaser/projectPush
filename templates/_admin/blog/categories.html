@@ -1,0 +1,198 @@
+{% extends '_admin/_base.html' %}
+
+{% block content %}
+<div class="p-6">
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Categories</h1>
+        <p class="text-gray-600">Organize your blog posts with categories</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Create New Category -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Category</h3>
+
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <div>
+          <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+            Name <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.name }}"
+            value="{{ form.name.value|default:'' }}"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            required>
+          {% if form.name.errors %}
+          <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+            Description
+          </label>
+          <textarea id="{{ form.description.id_for_label }}" name="{{ form.description.name }}" rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">{{ form.description.value|default:'' }}</textarea>
+          {% if form.description.errors %}
+          <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <button type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200">
+          <i class="fas fa-plus mr-2"></i>Add Category
+        </button>
+      </form>
+    </div>
+
+    <!-- Existing Categories -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Existing Categories</h3>
+
+      {% if categories %}
+      <div class="space-y-3">
+        {% for category in categories %}
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div class="flex-1">
+            <h4 class="text-sm font-medium text-gray-900">{{ category.name }}</h4>
+            {% if category.description %}
+            <p class="text-xs text-gray-500 mt-1">{{ category.description|truncatechars:60 }}</p>
+            {% endif %}
+            <div class="flex items-center space-x-2 mt-1">
+              <span class="text-xs text-gray-500">{{ category.posts.count }} posts</span>
+              <span class="text-xs text-gray-400">•</span>
+              <span class="text-xs text-gray-500">Slug: {{ category.slug }}</span>
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <button
+              onclick="editCategory('{{ category.id }}', '{{ category.name|escapejs }}', '{{ category.description|escapejs }}')"
+              class="text-blue-600 hover:text-blue-800" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            {% if category.posts.count == 0 %}
+            <button onclick="deleteCategory('{{ category.id }}', '{{ category.name|escapejs }}')"
+              class="text-red-600 hover:text-red-800" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+            {% else %}
+            <span class="text-gray-400" title="Cannot delete category with posts">
+              <i class="fas fa-trash"></i>
+            </span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center text-gray-500 py-8">
+        <i class="fas fa-tags text-4xl text-gray-300 mb-4"></i>
+        <p>No categories created yet.</p>
+        <p class="text-sm">Create your first category to organize your blog posts.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Edit Category Modal -->
+<div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Category</h3>
+
+      <form id="editForm" method="post" class="space-y-4">
+        {% csrf_token %}
+        <input type="hidden" id="editCategoryId" name="category_id">
+
+        <div>
+          <label for="editName" class="block text-sm font-medium text-gray-700 mb-2">
+            Name <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="editName" name="name"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            required>
+        </div>
+
+        <div>
+          <label for="editDescription" class="block text-sm font-medium text-gray-700 mb-2">
+            Description
+          </label>
+          <textarea id="editDescription" name="description" rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+        </div>
+
+        <div class="flex space-x-3">
+          <button type="submit"
+            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200">
+            Update
+          </button>
+          <button type="button" onclick="closeEditModal()"
+            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-medium transition duration-200">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Category Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3 text-center">
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+        <i class="fas fa-exclamation-triangle text-red-600"></i>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mt-4">Delete Category</h3>
+      <div class="mt-2 px-7 py-3">
+        <p class="text-sm text-gray-500">
+          Are you sure you want to delete "<span id="deleteCategoryName"></span>"? This action cannot be undone.
+        </p>
+      </div>
+      <div class="items-center px-4 py-3">
+        <form id="deleteForm" method="post">
+          {% csrf_token %}
+          <input type="hidden" id="deleteCategoryId" name="delete_category_id">
+          <button type="submit"
+            class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+            Delete
+          </button>
+        </form>
+        <button onclick="closeDeleteModal()"
+          class="mt-3 px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function editCategory(id, name, description) {
+    document.getElementById('editCategoryId').value = id;
+    document.getElementById('editName').value = name;
+    document.getElementById('editDescription').value = description;
+    document.getElementById('editModal').classList.remove('hidden');
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+  }
+
+  function deleteCategory(id, name) {
+    document.getElementById('deleteCategoryId').value = id;
+    document.getElementById('deleteCategoryName').textContent = name;
+    document.getElementById('deleteModal').classList.remove('hidden');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+  }
+</script>
+{% endblock %}

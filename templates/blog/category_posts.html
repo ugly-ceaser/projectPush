@@ -1,0 +1,128 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block title %}
+Posts in {{ category.name }}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="w-full">
+    <div class="mb-8">
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="flex space-x-2 text-sm text-gray-600">
+          <li>
+            <a href="{% url 'blog:post_list' %}" class="text-blue-600 hover:text-blue-800">Blog</a>
+          </li>
+          <li class="flex items-center">
+            <svg class="w-4 h-4 mx-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-gray-500">{{ category.name }}</span>
+          </li>
+        </ol>
+      </nav>
+
+      <h1 class="text-4xl font-bold text-gray-900 mb-4 flex items-center">
+        <i class="fas fa-folder mr-3 text-blue-600"></i> {{ category.name }}
+      </h1>
+      {% if category.description %}
+      <p class="text-xl text-gray-600 mb-4">{{ category.description }}</p>
+      {% endif %}
+      <p class="text-gray-500">
+        {{ posts.paginator.count }} post{{ posts.paginator.count|pluralize }}
+        found
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for post in posts %}
+      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        {% if post.featured_image %}
+        <img src="{{ post.featured_image.url }}" class="w-full h-48 object-cover" alt="{{ post.title }}" />
+        {% else %}
+        <div class="w-full h-48 bg-gray-100 flex items-center justify-content-center">
+          <i class="fas fa-image text-4xl text-gray-400"></i>
+        </div>
+        {% endif %}
+        <div class="p-6 flex flex-col h-auto">
+          <h5 class="text-xl font-semibold mb-3">
+            <a href="{{ post.get_absolute_url }}"
+              class="text-gray-900 hover:text-blue-600 transition-colors duration-200">
+              {{ post.title }}
+            </a>
+          </h5>
+          <p class="text-gray-600 mb-4 flex-grow">
+            {{ post.excerpt|truncatechars:100 }}
+          </p>
+          <div class="text-sm text-gray-500 mb-4">
+            <i class="fas fa-user mr-1"></i> {{ post.author.get_full_name }}
+            <span class="mx-2">|</span>
+            <i class="fas fa-calendar mr-1"></i> {{ post.created_at|date:"M d, Y" }}
+          </div>
+          <div class="mt-auto">
+            <a href="{{ post.get_absolute_url }}"
+              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors duration-200">
+              Read More <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-span-full">
+        <div class="text-center py-12">
+          <i class="fas fa-folder-open text-6xl text-gray-300 mb-4"></i>
+          <h3 class="text-2xl font-semibold text-gray-600 mb-2">No posts in this category</h3>
+          <p class="text-gray-500 mb-6">Check back later for new content.</p>
+          <a href="{% url 'blog:post_list' %}"
+            class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors duration-200">
+            Browse All Posts
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Category posts pagination" class="mt-8">
+      <div class="flex justify-center">
+        <div class="flex space-x-1">
+          {% if page_obj.has_previous %}
+          <a href="?page=1"
+            class="px-3 py-2 bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 rounded-l-md">
+            <i class="fas fa-angle-double-left"></i>
+          </a>
+          <a href="?page={{ page_obj.previous_page_number }}"
+            class="px-3 py-2 bg-white border border-gray-300 text-gray-500 hover:bg-gray-50">
+            <i class="fas fa-angle-left"></i>
+          </a>
+          {% endif %}
+
+          {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+          <span class="px-3 py-2 bg-blue-600 border border-blue-600 text-white">{{ num }}</span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a href="?page={{ num }}"
+            class="px-3 py-2 bg-white border border-gray-300 text-gray-500 hover:bg-gray-50">{{ num }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"
+              class="px-3 py-2 bg-white border border-gray-300 text-gray-500 hover:bg-gray-50">
+              <i class="fas fa-angle-right"></i>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}"
+              class="px-3 py-2 bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 rounded-r-md">
+              <i class="fas fa-angle-double-right"></i>
+            </a>
+            {% endif %}
+        </div>
+      </div>
+    </nav>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

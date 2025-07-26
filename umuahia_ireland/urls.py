@@ -17,6 +17,7 @@ urlpatterns = [
     path("dashboard/", include("dashboard.urls", namespace="user:")),
     path("auth/", include("accounts.urls", namespace="accounts")),
     path("auth/", include("django.contrib.auth.urls")),
+    path("blog/", include("blog.urls", namespace="blog")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

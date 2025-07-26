@@ -1,0 +1,221 @@
+{% extends '_admin/_base.html' %}
+
+{% block content %}
+<div class="p-6">
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Blog Posts</h1>
+        <p class="text-gray-600">Manage all your blog posts</p>
+      </div>
+      <a href="{% url 'admin:blog_create_post' %}"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200">
+        <i class="fas fa-plus mr-2"></i>Create New Post
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="mb-6">
+    <nav class="flex space-x-1">
+      <a href="{% url 'admin:blog_posts' %}"
+        class="px-3 py-2 rounded-md text-sm font-medium {% if not current_status %}bg-blue-100 text-blue-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+        All Posts
+      </a>
+      <a href="{% url 'admin:blog_posts' %}?status=published"
+        class="px-3 py-2 rounded-md text-sm font-medium {% if current_status == 'published' %}bg-green-100 text-green-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+        Published
+      </a>
+      <a href="{% url 'admin:blog_posts' %}?status=draft"
+        class="px-3 py-2 rounded-md text-sm font-medium {% if current_status == 'draft' %}bg-yellow-100 text-yellow-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+        Drafts
+      </a>
+      <a href="{% url 'admin:blog_posts' %}?status=archived"
+        class="px-3 py-2 rounded-md text-sm font-medium {% if current_status == 'archived' %}bg-gray-100 text-gray-700{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+        Archived
+      </a>
+    </nav>
+  </div>
+
+  <!-- Posts Table -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for post in posts %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                {% if post.featured_image %}
+                <img class="h-10 w-10 rounded-lg object-cover mr-3" src="{{ post.featured_image.url }}"
+                  alt="{{ post.title }}">
+                {% else %}
+                <div class="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center mr-3">
+                  <i class="fas fa-image text-gray-400"></i>
+                </div>
+                {% endif %}
+                <div>
+                  <div class="text-sm font-medium text-gray-900">{{ post.title|truncatechars:50 }}</div>
+                  {% if post.is_featured %}
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <i class="fas fa-star mr-1"></i>Featured
+                  </span>
+                  {% endif %}
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ post.author.get_full_name|default:post.author.email }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ post.category.name|default:"-" }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                {% if post.status == 'published' %}bg-green-100 text-green-800
+                                {% elif post.status == 'draft' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ post.get_status_display }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ post.view_count }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ post.created_at|date:"M d, Y" }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex space-x-2">
+                {% if post.status == 'published' %}
+                <a href="{% url 'blog:post_detail' post.slug %}" target="_blank"
+                  class="text-blue-600 hover:text-blue-900" title="View Post">
+                  View
+                  <i class="ti ti-eye"></i>
+                </a>
+                {% endif %}
+                <a href="{% url 'admin:blog_edit_post' post.slug %}" class="text-indigo-600 hover:text-indigo-900"
+                  title="Edit">
+                  Edit
+                  <i class="ti ti-pencil"></i>
+                </a>
+                <button onclick="deletePost('{{ post.slug }}', '{{ post.title }}')"
+                  class="text-red-600 hover:text-red-900" title="Delete">
+                  Delete
+                  <i class="ti ti-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+              <div class="py-8">
+                <i class="fas fa-newspaper text-4xl text-gray-300 mb-4"></i>
+                <p class="text-lg font-medium">No posts found</p>
+                <p class="text-sm">Create your first blog post to get started.</p>
+                <a href="{% url 'admin:blog_create_post' %}"
+                  class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                  <i class="fas fa-plus mr-2"></i>Create New Post
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+  <div class="mt-6 flex items-center justify-between">
+    <div class="text-sm text-gray-700">
+      Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} results
+    </div>
+    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}"
+        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+        <i class="fas fa-chevron-left"></i>
+      </a>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+      <span
+        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-blue-600">
+        {{ num }}
+      </span>
+      {% else %}
+      <a href="?page={{ num }}{% if current_status %}&status={{ current_status }}{% endif %}"
+        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+        {{ num }}
+      </a>
+      {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}"
+        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      {% endif %}
+    </nav>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3 text-center">
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+        <i class="fas fa-exclamation-triangle text-red-600"></i>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mt-4">Delete Post</h3>
+      <div class="mt-2 px-7 py-3">
+        <p class="text-sm text-gray-500">
+          Are you sure you want to delete "<span id="postTitle"></span>"? This action cannot be undone.
+        </p>
+      </div>
+      <div class="items-center px-4 py-3">
+        <form id="deleteForm" method="post">
+          {% csrf_token %}
+          <button type="submit"
+            class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+            Delete
+          </button>
+        </form>
+        <button onclick="closeDeleteModal()"
+          class="mt-3 px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function deletePost(slug, title) {
+    document.getElementById('postTitle').textContent = title;
+    document.getElementById('deleteForm').action = `/admin/blog/posts/${slug}/delete/`;
+    document.getElementById('deleteModal').classList.remove('hidden');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+  }
+</script>
+{% endblock %}

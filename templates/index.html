@@ -21,7 +21,9 @@
         /* Match your theme */
     }
 
-    #hero, .slider-bg, .slider-image {
+    #hero,
+    .slider-bg,
+    .slider-image {
         width: 100vw !important;
         height: 80vh !important;
         box-sizing: border-box !important;
@@ -29,12 +31,14 @@
         padding: 0 !important;
         overflow: hidden !important;
     }
+
     .slider-bg {
         position: absolute;
         left: 0;
         top: 0;
         z-index: 0;
     }
+
     .slider-image {
         position: absolute;
         top: 0;
@@ -51,6 +55,7 @@
         border: none !important;
         box-sizing: border-box !important;
     }
+
     .slider-image.active {
         opacity: 1;
         z-index: 2;
@@ -70,7 +75,8 @@
     <div class="absolute inset-0 z-[3] bg-black" style="background: rgba(0,0,0,0.5);"></div>
 
     <!-- Hero Text Content -->
-    <div class="flex items-center justify-center py-10 h-full flex-col relative z-10" style="height:60vh; min-height:350px;">
+    <div class="flex items-center justify-center py-10 h-full flex-col relative z-10"
+        style="height:60vh; min-height:350px;">
         <div class="flex items-center flex-col text-center space-y-5">
             <h1 class="text-4xl md:text-7xl font-bold text-white opensans-text" data-aos="fade-up">
                 Welcome to
@@ -81,7 +87,8 @@
             </h2>
 
             <p class="text-xl md:text-2xl text-white w-full md:w-1/2" data-aos="fade-up" data-aos-delay="400">
-                We empower and support African immigrants, as they navigate life in Ireland. We are dedicated to fostering a strong,
+                We empower and support African immigrants, as they navigate life in Ireland. We are dedicated to
+                fostering a strong,
                 inclusive community to ease the challenges of relocation.
             </p>
 
@@ -107,9 +114,6 @@
     </script>
 </section>
 
-
-
-
 <section id='about' class="h-fit flex items-center justify-center mt-10" data-aos="fade-left" data-aos-duration="1200">
     <div class="container flex sm:flex-row flex-col-reverse">
         <div class="w-full md:w-1/2 space-y-2 p-10 flex items-center justify-center" data-aos="fade-right"
@@ -118,7 +122,7 @@
                 <h1 class="text-4xl md:text-[3rem] font-semibold text-black" data-aos="fade-up">About Us
                 </h1>
                 <p class="text-md" data-aos="fade-up" data-aos-delay="200">Umuahia Community Ireland is a registered
-                    charity organization that supports African immigrants, as they settle and thrive in Ireland. 
+                    charity organization that supports African immigrants, as they settle and thrive in Ireland.
                     Officially registered on 4th September 2024, our mission is to foster integration by
                     providing cultural orientation, career development, and emotional support to individuals and
                     families navigating their new environment.
@@ -145,7 +149,8 @@
         </div>
 
         <div class="w-full md:w-1/2 flex items-center justify-between" data-aos="zoom-in" data-aos-delay="200">
-            <img src="{% static 'img/umuinsidetower.png' %}" alt="Map" class="w-full h-full object-cover rounded-br-[250px]">
+            <img src="{% static 'img/umuinsidetower.png' %}" alt="Map"
+                class="w-full h-full object-cover rounded-br-[250px]">
         </div>
     </div>
 </section>
@@ -170,22 +175,24 @@
                 </h2>
                 <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
                     At Umuahia Community Ireland, our vision is rooted in the belief that every immigrant deserves a
-                    strong foundation, a supportive community, and equal opportunities to succeed in their new home. 
+                    strong foundation, a supportive community, and equal opportunities to succeed in their new home.
                 </p>
                 <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
                     When we founded this organization, we envisioned a place where African immigrants, could find
                     guidance, support, and a sense of belonging as they navigate life in Ireland. Moving to a new
                     country comes with many challenges—understanding the culture, securing employment, accessing
-                    housing, and overcoming feelings of isolation. 
+                    housing, and overcoming feelings of isolation.
                 </p>
                 <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
-                    Through cultural orientation, career development, and emotional support, we aim to empower 
-                    individuals and families to survive and thrive. 
+                    Through cultural orientation, career development, and emotional support, we aim to empower
+                    individuals and families to survive and thrive.
                 </p>
                 <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
                     Our community is more than just a network—it is a home away from home, where we celebrate our
-                    heritage while embracing the opportunities that Ireland offers. Our vision is to see every immigrant confidently
-                    integrating into Irish society, achieving their dreams, and contributing meaningfully to their new communities.
+                    heritage while embracing the opportunities that Ireland offers. Our vision is to see every immigrant
+                    confidently
+                    integrating into Irish society, achieving their dreams, and contributing meaningfully to their new
+                    communities.
                 </p>
                 <p class="text-md text-gray-600" data-aos="fade-up" data-aos-delay="300">
                     Together, we can build a future where no one feels alone in their journey—where unity, support, and
@@ -237,45 +244,51 @@
         <div class="w-full md:w-1/2 space-y-2 md:p-10 flex items-center justify-center" data-aos="fade-right"
             data-aos-delay="200">
             <div class="w-full md:w-3/4">
-                <h1 class="text-4xl md:text-[2rem] font-semibold text-black mb-3" data-aos="fade-up">The History Of Umuahia 
-                    - Cradle of Culture, Commerce, and Courage 
+                <h1 class="text-4xl md:text-[2rem] font-semibold text-black mb-3" data-aos="fade-up">The History Of
+                    Umuahia
+                    - Cradle of Culture, Commerce, and Courage
                 </h1>
                 <div class="max-w-2xl mx-auto px-4 py-6">
-  <!-- First Paragraph (Always Visible) -->
-  <p class="text-gray-700 mb-4">
-    Umuahia, the capital of Abia State in south-eastern Nigeria, is a city rich in cultural heritage, historic
-    significance, and agricultural strength. Nestled between verdant hills and fertile lands, Umuahia derives
-    its name from "Oma ahia," meaning "market place" in the Igbo language. Over time, the term evolved into
-    "Umuahia," reflecting both its trading roots and the vibrant communities that make up the region.
-  </p>
+                    <!-- First Paragraph (Always Visible) -->
+                    <p class="text-gray-700 mb-4">
+                        Umuahia, the capital of Abia State in south-eastern Nigeria, is a city rich in cultural
+                        heritage, historic
+                        significance, and agricultural strength. Nestled between verdant hills and fertile lands,
+                        Umuahia derives
+                        its name from "Oma ahia," meaning "market place" in the Igbo language. Over time, the term
+                        evolved into
+                        "Umuahia," reflecting both its trading roots and the vibrant communities that make up the
+                        region.
+                    </p>
 
-  <!-- Hidden Paragraphs (Initially hidden) -->
-  <div id="moreContent" class="hidden transition-all duration-500 space-y-4 text-gray-700">
-    <p>
-      Historically, Umuahia was an important stop along the trade routes during the pre-colonial era, serving as a central hub for
-      exchanging palm oil, kola nuts, and agricultural goods...
-    </p>
-    <p>
-      Umuahia also played a pivotal role during Nigeria's civil war (1967–1970), serving briefly as the capital of the
-      defunct Republic of Biafra...
-    </p>
-    <p>
-      Today, Umuahia is known for its serene environment, rich traditions, and as the home of many notable scholars...
-    </p>
-    <p>
-      For members of the Umuahia diaspora in Ireland and beyond, the city remains a source of identity...
-    </p>
-  </div>
+                    <!-- Hidden Paragraphs (Initially hidden) -->
+                    <div id="moreContent" class="hidden transition-all duration-500 space-y-4 text-gray-700">
+                        <p>
+                            Historically, Umuahia was an important stop along the trade routes during the pre-colonial
+                            era, serving as a central hub for
+                            exchanging palm oil, kola nuts, and agricultural goods...
+                        </p>
+                        <p>
+                            Umuahia also played a pivotal role during Nigeria's civil war (1967–1970), serving briefly
+                            as the capital of the
+                            defunct Republic of Biafra...
+                        </p>
+                        <p>
+                            Today, Umuahia is known for its serene environment, rich traditions, and as the home of many
+                            notable scholars...
+                        </p>
+                        <p>
+                            For members of the Umuahia diaspora in Ireland and beyond, the city remains a source of
+                            identity...
+                        </p>
+                    </div>
 
-  <!-- Toggle Button -->
-  <button
-    id="toggleButton"
-    class="mt-4 text-blue-600 hover:text-blue-800 font-medium"
-    onclick="toggleReadMore()"
-  >
-    Read More
-  </button>
-    </div>
+                    <!-- Toggle Button -->
+                    <button id="toggleButton" class="mt-4 text-blue-600 hover:text-blue-800 font-medium"
+                        onclick="toggleReadMore()">
+                        Read More
+                    </button>
+                </div>
 
                 <a href=""
                     class="mt-10 md:mt-20 px-10 py-2 rounded-sm border-2 border-primary duration-300 hover:bg-primary text-primary hover:text-white font-semibold text-sm block w-fit uppercase"
@@ -372,7 +385,7 @@
             </div>
             <!-- Repeat for other slides with unique info -->
         </div>
-       
+
     </div>
     </div>
 </section>
@@ -429,12 +442,12 @@
     </div>
 </section>
 <script>
-  function toggleReadMore() {
-    const moreContent = document.getElementById('moreContent');
-    const button = document.getElementById('toggleButton');
-    moreContent.classList.toggle('hidden');
-    button.textContent = moreContent.classList.contains('hidden') ? 'Read More' : 'Read Less';
-  }
+    function toggleReadMore() {
+        const moreContent = document.getElementById('moreContent');
+        const button = document.getElementById('toggleButton');
+        moreContent.classList.toggle('hidden');
+        button.textContent = moreContent.classList.contains('hidden') ? 'Read More' : 'Read Less';
+    }
 </script>
 
 {% endblock %}
