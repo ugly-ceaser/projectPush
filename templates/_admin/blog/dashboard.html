@@ -1,0 +1,147 @@
+{% extends '_admin/_base.html' %}
+
+{% block content %}
+<div class="p-6">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Blog Dashboard</h1>
+    <p class="text-gray-600">Manage your blog content and monitor activity</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-newspaper text-2xl text-blue-500"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">Total Posts</p>
+          <p class="text-2xl font-semibold text-gray-900">{{ total_posts }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-check-circle text-2xl text-green-500"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">Published</p>
+          <p class="text-2xl font-semibold text-gray-900">{{ published_posts }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-edit text-2xl text-yellow-500"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">Drafts</p>
+          <p class="text-2xl font-semibold text-gray-900">{{ draft_posts }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-comments text-2xl text-red-500"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">Pending Comments</p>
+          <p class="text-2xl font-semibold text-gray-900">{{ pending_comments }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Posts -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900">Recent Posts</h3>
+          <a href="{% url 'admin:blog_posts' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            View All
+          </a>
+        </div>
+      </div>
+      <div class="divide-y divide-gray-200">
+        {% for post in recent_posts %}
+        <div class="px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <h4 class="text-sm font-medium text-gray-900">{{ post.title }}</h4>
+              <p class="text-sm text-gray-500">{{ post.created_at|date:"M d, Y" }}</p>
+            </div>
+            <div class="flex-shrink-0">
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                {% if post.status == 'published' %}bg-green-100 text-green-800
+                                {% elif post.status == 'draft' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ post.get_status_display }}
+              </span>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="px-6 py-4 text-center text-gray-500">
+          <p>No posts yet.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Pending Comments -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-medium text-gray-900">Pending Comments</h3>
+          <a href="{% url 'admin:blog_comments' %}?status=pending"
+            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            View All
+          </a>
+        </div>
+      </div>
+      <div class="divide-y divide-gray-200">
+        {% for comment in recent_comments %}
+        <div class="px-6 py-4">
+          <div class="flex items-start space-x-3">
+            <div class="flex-1">
+              <p class="text-sm text-gray-900">{{ comment.content|truncatewords:15 }}</p>
+              <div class="mt-1 flex items-center space-x-2 text-xs text-gray-500">
+                <span>by {{ comment.author_name }}</span>
+                <span>•</span>
+                <span>{{ comment.created_at|date:"M d, Y" }}</span>
+              </div>
+            </div>
+            <div class="flex space-x-2">
+              <form method="post" action="{% url 'admin:blog_comment_action' comment.id 'approve' %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="text-green-600 hover:text-green-800">
+                  <i class="fas fa-check"></i>
+                </button>
+              </form>
+              <form method="post" action="{% url 'admin:blog_comment_action' comment.id 'reject' %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="text-red-600 hover:text-red-800">
+                  <i class="fas fa-times"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="px-6 py-4 text-center text-gray-500">
+          <p>No pending comments.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

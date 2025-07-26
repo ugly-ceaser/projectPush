@@ -22,6 +22,16 @@ from .views import (
     EditFinancialCheckbookView,
     DeleteFinancialCheckbookView,
     FinancialCheckbookListView,
+    # Blog views
+    BlogDashboardView,
+    BlogPostListView,
+    BlogPostCreateView,
+    BlogPostEditView,
+    BlogPostDeleteView,
+    BlogCommentListView,
+    BlogCommentActionView,
+    BlogCategoryListView,
+    BlogTagListView,
 )
 
 app_name = "admin"
@@ -89,4 +99,26 @@ urlpatterns = [
     ),
     path("settings/", SettingsView.as_view(), name="settings"),
     path("change-password/", ChangePasswordView.as_view(), name="change_password"),
+    # Blog URLs
+    path("blog/", BlogDashboardView.as_view(), name="blog_dashboard"),
+    path("blog/posts/", BlogPostListView.as_view(), name="blog_posts"),
+    path("blog/posts/create/", BlogPostCreateView.as_view(), name="blog_create_post"),
+    path(
+        "blog/posts/<slug:slug>/edit/",
+        BlogPostEditView.as_view(),
+        name="blog_edit_post",
+    ),
+    path(
+        "blog/posts/<slug:slug>/delete/",
+        BlogPostDeleteView.as_view(),
+        name="blog_delete_post",
+    ),
+    path("blog/comments/", BlogCommentListView.as_view(), name="blog_comments"),
+    path(
+        "blog/comments/<uuid:comment_id>/<str:action>/",
+        BlogCommentActionView.as_view(),
+        name="blog_comment_action",
+    ),
+    path("blog/categories/", BlogCategoryListView.as_view(), name="blog_categories"),
+    path("blog/tags/", BlogTagListView.as_view(), name="blog_tags"),
 ]

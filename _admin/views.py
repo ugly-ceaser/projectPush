@@ -4,8 +4,12 @@ from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.views.generic import ListView, TemplateView, View
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.paginator import Paginator
+from django.db.models import Q, Count
 from users.models import CustomUser
 from app.models import Minuites, FinancialCheckbook
+from blog.models import BlogPost, Category, Tag, Comment, BlogSettings
+from blog.forms import BlogPostForm, BlogImageFormSet, CategoryForm, TagForm
 from django.core.exceptions import ValidationError
 
 
@@ -121,22 +125,22 @@ class UserApproveView(AdminRequiredMixin, View):
         if user.is_verified and not user.is_approved:
             user.is_approved = True
             user.save()
-            
+
             # Send approval email
             try:
                 from django.core.mail import send_mail
                 from django.conf import settings
-                
+
                 subject = "Your Account Has Been Approved"
                 message = f"""
                 Dear {user.first_name} {user.last_name},
-                
+
                 Your account has been approved by an administrator. You can now log in to the system.
-                
+
                 Best regards,
                 The Admin Team
                 """
-                
+
                 send_mail(
                     subject,
                     message,
@@ -147,11 +151,13 @@ class UserApproveView(AdminRequiredMixin, View):
             except Exception as e:
                 # Log the error but don't fail the approval
                 print(f"Failed to send approval email: {e}")
-            
-            messages.success(request, f"User {user.first_name} {user.last_name} has been approved.")
+
+            messages.success(
+                request, f"User {user.first_name} {user.last_name} has been approved."
+            )
         else:
             messages.error(request, "User cannot be approved at this time.")
-        
+
         return redirect("admin:members")
 
 
@@ -161,24 +167,24 @@ class UserRejectView(AdminRequiredMixin, View):
         if user.is_verified and user.is_approved:
             user.is_approved = False
             user.save()
-            
+
             # Send rejection email
             try:
                 from django.core.mail import send_mail
                 from django.conf import settings
-                
+
                 subject = "Your Account Access Has Been Revoked"
                 message = f"""
                 Dear {user.first_name} {user.last_name},
-                
+
                 Your account access has been revoked by an administrator. You will no longer be able to log in to the system.
-                
+
                 If you believe this is an error, please contact the administrator.
-                
+
                 Best regards,
                 The Admin Team
                 """
-                
+
                 send_mail(
                     subject,
                     message,
@@ -189,11 +195,13 @@ class UserRejectView(AdminRequiredMixin, View):
             except Exception as e:
                 # Log the error but don't fail the rejection
                 print(f"Failed to send rejection email: {e}")
-            
-            messages.success(request, f"User {user.first_name} {user.last_name} has been rejected.")
+
+            messages.success(
+                request, f"User {user.first_name} {user.last_name} has been rejected."
+            )
         else:
             messages.error(request, "User cannot be rejected at this time.")
-        
+
         return redirect("admin:members")
 
 
@@ -363,3 +371,217 @@ class DeleteFinancialCheckbookView(AdminRequiredMixin, View):
         checkbook_entry.delete()
         messages.success(request, "Financial checkbook entry deleted successfully.")
         return redirect("admin:financial_checkbook")
+
+
+# Blog Admin Views
+class BlogDashboardView(AdminRequiredMixin, TemplateView):
+    """Blog admin dashboard"""
+
+    template_name = "_admin/blog/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "total_posts": BlogPost.objects.count(),
+                "published_posts": BlogPost.objects.filter(status="published").count(),
+                "draft_posts": BlogPost.objects.filter(status="draft").count(),
+                "pending_comments": Comment.objects.filter(status="pending").count(),
+                "recent_posts": BlogPost.objects.all()[:5],
+                "recent_comments": Comment.objects.filter(status="pending")[:5],
+            }
+        )
+        return context
+
+
+class BlogPostListView(AdminRequiredMixin, ListView):
+    """Admin blog post list"""
+
+    model = BlogPost
+    template_name = "_admin/blog/post_list.html"
+    context_object_name = "posts"
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = BlogPost.objects.all().select_related("author", "category")
+        status = self.request.GET.get("status")
+        if status:
+            queryset = queryset.filter(status=status)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["current_status"] = self.request.GET.get("status")
+        return context
+
+
+class BlogPostCreateView(AdminRequiredMixin, View):
+    """Create new blog post"""
+
+    def get(self, request):
+        form = BlogPostForm()
+        formset = BlogImageFormSet()
+        context = {
+            "form": form,
+            "formset": formset,
+            "title": "Create New Post",
+        }
+        return render(request, "_admin/blog/post_form.html", context)
+
+    def post(self, request):
+        form = BlogPostForm(request.POST, request.FILES)
+        formset = BlogImageFormSet(request.POST, request.FILES)
+
+        if form.is_valid() and formset.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            form.save_m2m()
+
+            formset.instance = post
+            formset.save()
+
+            messages.success(request, "Blog post created successfully!")
+            return redirect("admin:blog_posts")
+
+        context = {
+            "form": form,
+            "formset": formset,
+            "title": "Create New Post",
+        }
+        return render(request, "_admin/blog/post_form.html", context)
+
+
+class BlogPostEditView(AdminRequiredMixin, View):
+    """Edit existing blog post"""
+
+    def get(self, request, slug):
+        post = get_object_or_404(BlogPost, slug=slug)
+        form = BlogPostForm(instance=post)
+        formset = BlogImageFormSet(instance=post)
+        context = {
+            "form": form,
+            "formset": formset,
+            "post": post,
+            "title": f"Edit: {post.title}",
+        }
+        return render(request, "_admin/blog/post_form.html", context)
+
+    def post(self, request, slug):
+        post = get_object_or_404(BlogPost, slug=slug)
+        form = BlogPostForm(request.POST, request.FILES, instance=post)
+        formset = BlogImageFormSet(request.POST, request.FILES, instance=post)
+
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            messages.success(request, "Blog post updated successfully!")
+            return redirect("admin:blog_posts")
+
+        context = {
+            "form": form,
+            "formset": formset,
+            "post": post,
+            "title": f"Edit: {post.title}",
+        }
+        return render(request, "_admin/blog/post_form.html", context)
+
+
+class BlogPostDeleteView(AdminRequiredMixin, View):
+    """Delete blog post"""
+
+    def post(self, request, slug):
+        post = get_object_or_404(BlogPost, slug=slug)
+        post.delete()
+        messages.success(request, "Blog post deleted successfully!")
+        return redirect("admin:blog_posts")
+
+
+class BlogCommentListView(AdminRequiredMixin, ListView):
+    """Admin comment management"""
+
+    model = Comment
+    template_name = "_admin/blog/comment_list.html"
+    context_object_name = "comments"
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Comment.objects.all().select_related("post", "author")
+        status = self.request.GET.get("status")
+        if status:
+            queryset = queryset.filter(status=status)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["current_status"] = self.request.GET.get("status")
+        return context
+
+
+class BlogCommentActionView(AdminRequiredMixin, View):
+    """Approve/reject comments"""
+
+    def post(self, request, comment_id, action):
+        comment = get_object_or_404(Comment, id=comment_id)
+
+        if action == "approve":
+            comment.status = "approved"
+            messages.success(request, "Comment approved!")
+        elif action == "reject":
+            comment.status = "rejected"
+            messages.success(request, "Comment rejected!")
+
+        comment.save()
+        return redirect("admin:blog_comments")
+
+
+class BlogCategoryListView(AdminRequiredMixin, ListView):
+    """Manage blog categories"""
+
+    model = Category
+    template_name = "_admin/blog/categories.html"
+    context_object_name = "categories"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = CategoryForm()
+        return context
+
+    def post(self, request):
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category created successfully!")
+            return redirect("admin:blog_categories")
+
+        context = {
+            "categories": Category.objects.all(),
+            "form": form,
+        }
+        return render(request, "_admin/blog/categories.html", context)
+
+
+class BlogTagListView(AdminRequiredMixin, ListView):
+    """Manage blog tags"""
+
+    model = Tag
+    template_name = "_admin/blog/tags.html"
+    context_object_name = "tags"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = TagForm()
+        return context
+
+    def post(self, request):
+        form = TagForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tag created successfully!")
+            return redirect("admin:blog_tags")
+
+        context = {
+            "tags": Tag.objects.all(),
+            "form": form,
+        }
+        return render(request, "_admin/blog/tags.html", context)

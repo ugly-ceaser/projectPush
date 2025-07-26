@@ -1,0 +1,157 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block title %}Manage Comments{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-comments"></i> Manage Comments</h1>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="GET" class="row g-3">
+        <div class="col-md-3">
+          <select name="status" class="form-select">
+            <option value="">All Status</option>
+            <option value="pending" {% if current_status=='pending' %}selected{% endif %}>Pending</option>
+            <option value="approved" {% if current_status=='approved' %}selected{% endif %}>Approved</option>
+            <option value="rejected" {% if current_status=='rejected' %}selected{% endif %}>Rejected</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-outline-primary">
+            <i class="fas fa-filter"></i> Filter
+          </button>
+          <a href="{% url 'blog:admin_comment_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-times"></i> Clear
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Comments List -->
+  <div class="row">
+    {% for comment in comments %}
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-0">
+              <i class="fas fa-user"></i> {{ comment.author_name }}
+              {% if comment.parent %}
+              <small class="text-muted">replied to a comment</small>
+              {% endif %}
+            </h6>
+            <small class="text-muted">
+              on <a href="{{ comment.post.get_absolute_url }}" target="_blank">{{ comment.post.title }}</a>
+              | {{ comment.created_at|date:"F d, Y \a\\t g:i A" }}
+            </small>
+          </div>
+          <div>
+            {% if comment.status == 'pending' %}
+            <span class="badge bg-warning">Pending</span>
+            {% elif comment.status == 'approved' %}
+            <span class="badge bg-success">Approved</span>
+            {% else %}
+            <span class="badge bg-danger">Rejected</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-text">{{ comment.content|linebreaks }}</p>
+
+          {% if comment.parent %}
+          <div class="mt-3 p-3 bg-light rounded">
+            <h6>Original Comment:</h6>
+            <p class="mb-0">{{ comment.parent.content|truncatechars:200 }}</p>
+            <small class="text-muted">by {{ comment.parent.author_name }}</small>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          <div class="btn-group" role="group">
+            {% if comment.status != 'approved' %}
+            <a href="{% url 'blog:admin_comment_action' comment.id 'approve' %}" class="btn btn-sm btn-outline-success">
+              <i class="fas fa-check"></i> Approve
+            </a>
+            {% endif %}
+
+            {% if comment.status != 'rejected' %}
+            <a href="{% url 'blog:admin_comment_action' comment.id 'reject' %}" class="btn btn-sm btn-outline-danger"
+              onclick="return confirm('Are you sure you want to reject this comment?')">
+              <i class="fas fa-times"></i> Reject
+            </a>
+            {% endif %}
+
+            <a href="{{ comment.post.get_absolute_url }}#comment-{{ comment.id }}"
+              class="btn btn-sm btn-outline-primary" target="_blank">
+              <i class="fas fa-eye"></i> View on Post
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="text-center py-5">
+        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+        <h3 class="text-muted">No comments found</h3>
+        <p class="text-muted">Comments will appear here when users start engaging with your blog posts.</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+  <nav aria-label="Comments pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}">
+          <i class="fas fa-angle-double-left"></i>
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link"
+          href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">
+          <i class="fas fa-angle-left"></i>
+        </a>
+      </li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+      <li class="page-item active">
+        <span class="page-link">{{ num }}</span>
+      </li>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item">
+        <a class="page-link" href="?page={{ num }}{% if current_status %}&status={{ current_status }}{% endif %}">{{ num
+          }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link"
+            href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">
+            <i class="fas fa-angle-right"></i>
+          </a>
+        </li>
+        <li class="page-item">
+          <a class="page-link"
+            href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}">
+            <i class="fas fa-angle-double-right"></i>
+          </a>
+        </li>
+        {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

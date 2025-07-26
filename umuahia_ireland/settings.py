@@ -5,7 +5,6 @@ from .config import (
     SECRET_KEY,
     DEBUG,
     DB_NAME,
-    ALLOWED_HOSTS,
     DB_USER,
     DB_PASSWORD,
     DB_HOST,
@@ -17,7 +16,6 @@ from .config import (
     Admin_Email,
     SUPERUSER_EMAIL,
     SUPERUSER_PASSWORD,
-    PAYPAL_CLIENT_ID,
 )
 
 APP_NAME = APP_NAME
@@ -45,6 +43,7 @@ INSTALLED_APPS = [
     "_admin.apps.AdminConfig",
     "dashboard.apps.DashboardConfig",
     "users.apps.UsersConfig",
+    "blog.apps.BlogConfig",
 ]
 
 MIDDLEWARE = [
@@ -79,27 +78,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "umuahia_ireland.wsgi.application"
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": DB_NAME,
-#         "USER": DB_USER,
-#         "PASSWORD": DB_PASSWORD,
-#         "HOST": DB_HOST,
-#         "PORT": DB_PORT,
-#     }
-# }
-
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv(
-            "DATABASE_URL",
-            "postgresql://umuahia_db_cjtb_user:tnVzOQdGLPMsXXleQsTQVdCTdy6IzsWY@dpg-cvtq0lbe5dus73ad9ltg-a.oregon-postgres.render.com/umuahia_db_cjtb",
-        ),
-        conn_max_age=600,
-        ssl_require=True,  # Render requires SSL for connections
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DB_NAME,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
+    }
 }
+
+# DATABASES = {
+#     "default": dj_database_url.config(
+#         default=os.getenv(
+#             "DATABASE_URL",
+#             "postgresql://umuahia_db_cjtb_user:tnVzOQdGLPMsXXleQsTQVdCTdy6IzsWY@dpg-cvtq0lbe5dus73ad9ltg-a.oregon-postgres.render.com/umuahia_db_cjtb",
+#         ),
+#         conn_max_age=600,
+#         ssl_require=True,  # Render requires SSL for connections
+#     )
+# }
 
 
 AUTH_PASSWORD_VALIDATORS = [
