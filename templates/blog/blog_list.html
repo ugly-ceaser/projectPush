@@ -114,7 +114,7 @@
             <div class="text-sm text-gray-500 mb-3">
               <div class="flex flex-wrap gap-2">
                 <span class="flex items-center">
-                  <i class="fas fa-user mr-1"></i>{{ post.author.get_full_name }}
+                  <i class="fas fa-user mr-1"></i>{{ post.author.get_full_name|default:'Admin' }}
                 </span>
                 <span class="flex items-center">
                   <i class="fas fa-calendar mr-1"></i>{{ post.created_at|date:"M d, Y" }}

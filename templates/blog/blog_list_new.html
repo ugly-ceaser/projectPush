@@ -82,7 +82,7 @@
           <p class="text-gray-600 text-sm mb-4">{{ post.excerpt|truncatewords:20 }}</p>
           <div class="flex items-center justify-between text-sm text-gray-500">
             <div class="flex items-center space-x-4">
-              <span><i class="fas fa-user mr-1"></i>{{ post.author.get_full_name|default:post.author.email }}</span>
+              <span><i class="fas fa-user mr-1"></i>{{ post.author.get_full_name|default:'Admin' }}</span>
               <span><i class="fas fa-calendar mr-1"></i>{{ post.published_at|date:"M d, Y" }}</span>
             </div>
             <div class="flex items-center space-x-2">
@@ -168,7 +168,7 @@
 
           <div class="flex items-center justify-between text-sm text-gray-500">
             <div class="flex items-center space-x-4">
-              <span><i class="fas fa-user mr-1"></i>{{ post.author.get_full_name|default:post.author.email }}</span>
+              <span><i class="fas fa-user mr-1"></i>{{ post.author.get_full_name|default:'Admin' }}</span>
               <span><i class="fas fa-calendar mr-1"></i>{{ post.published_at|date:"M d, Y" }}</span>
             </div>
             <div class="flex items-center space-x-2">
