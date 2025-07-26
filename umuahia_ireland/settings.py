@@ -4,6 +4,7 @@ from pathlib import Path
 from .config import (
     SECRET_KEY,
     DEBUG,
+    ALLOWED_HOSTS,
     DB_NAME,
     DB_USER,
     DB_PASSWORD,
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    # Third party apps
+    "django_extensions",
     # Local apps
     "app.apps.AppConfig",
     "_admin.apps.AdminConfig",
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -78,27 +82,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "umuahia_ireland.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": DB_NAME,
-        "USER": DB_USER,
-        "PASSWORD": DB_PASSWORD,
-        "HOST": DB_HOST,
-        "PORT": DB_PORT,
-    }
-}
-
 # DATABASES = {
-#     "default": dj_database_url.config(
-#         default=os.getenv(
-#             "DATABASE_URL",
-#             "postgresql://umuahia_db_cjtb_user:tnVzOQdGLPMsXXleQsTQVdCTdy6IzsWY@dpg-cvtq0lbe5dus73ad9ltg-a.oregon-postgres.render.com/umuahia_db_cjtb",
-#         ),
-#         conn_max_age=600,
-#         ssl_require=True,  # Render requires SSL for connections
-#     )
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": DB_NAME,
+#         "USER": DB_USER,
+#         "PASSWORD": DB_PASSWORD,
+#         "HOST": DB_HOST,
+#         "PORT": DB_PORT,
+#     }
 # }
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.getenv(
+            "DATABASE_URL",
+            "postgresql://umuahia_db_cjtb_user:tnVzOQdGLPMsXXleQsTQVdCTdy6IzsWY@dpg-cvtq0lbe5dus73ad9ltg-a.oregon-postgres.render.com/umuahia_db_cjtb",
+        ),
+        conn_max_age=600,
+        ssl_require=True,  # Render requires SSL for connections
+    )
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -126,11 +130,22 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR / "static"),)
-STATIC_ROOT = os.path.join(BASE_DIR / "staticfiles")
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR / "media")
+MEDIA_ROOT = BASE_DIR / "media"
 
 LOGIN_URL = "accounts:login"
 
@@ -151,3 +166,23 @@ EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
 
 SUPERUSER_EMAIL = (SUPERUSER_EMAIL,)
 SUPERUSER_PASSWORD = (SUPERUSER_PASSWORD,)
+
+# # Security Settings for Production
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_REDIRECT_EXEMPT = []
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    USE_TZ = True
+    X_FRAME_OPTIONS = "DENY"
+
+    # Update ALLOWED_HOSTS for production
+    ALLOWED_HOSTS = [
+        "localhost",
+        "127.0.0.1",
+        "*.herokuapp.com",
+        "*.render.com",
+    ]

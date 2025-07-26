@@ -36,7 +36,7 @@
           <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
             <div class="flex items-center">
               <i class="fas fa-user mr-1"></i>
-              <strong>{{ post.author.get_full_name }}</strong>
+              <strong>{{ post.author.get_full_name|default:'Admin' }}</strong>
             </div>
             <div class="flex items-center">
               <i class="fas fa-calendar mr-1"></i>
