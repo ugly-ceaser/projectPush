@@ -25,6 +25,10 @@
         rel="stylesheet">
     <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR"></script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
         .scroll-section {
             scroll-margin-top: 120px;
         }
@@ -248,29 +252,7 @@
             });
         });
 
-        document.querySelectorAll('a[href^="#"]').forEach(link => {
-            link.addEventListener('click', function (e) {
-                const targetId = this.getAttribute('href').slice(1);
-                const target = document.getElementById(targetId);
-                if (target) {
-                    e.preventDefault();
-                    
-                    // Get the actual header height dynamically
-                    const header = document.getElementById('header');
-                    const headerHeight = header ? header.offsetHeight : 100;
-                    const extraOffset = 60; // px for breathing room
-                    
-                    // Calculate the target position
-                    const targetPosition = target.offsetTop - headerHeight - extraOffset;
-                    
-                    // Smooth scroll to the calculated position
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
+
     </script>
 
     <!-- PayPal Donation Button Configuration -->
