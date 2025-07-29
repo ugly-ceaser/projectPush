@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from umuahia_ireland.config import APP_NAME
+from .models import Testimonial
 
 # Import blog models
 try:
@@ -11,6 +12,14 @@ except ImportError:
 # Create your views here.
 def home(request):
     context = {}
+
+    # Get active testimonials
+    try:
+        testimonials = Testimonial.objects.filter(is_active=True)
+        context["testimonials"] = testimonials
+    except Exception:
+        # If there's any error (like table doesn't exist), just continue without testimonials
+        context["testimonials"] = []
 
     # Get latest blog posts if blog app is available
     if BlogPost:
